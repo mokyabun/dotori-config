@@ -1,4 +1,4 @@
-import type { Context } from 'dotori'
+import type { Context } from '@mokyabun/dotori'
 
 // Apple keyboard shortcut reference: https://support.apple.com/en-us/102650
 // Apple UserDefaults overview: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/UserDefaults/AboutPreferenceDomains/AboutPreferenceDomains.html

@@ -1,5 +1,5 @@
 import os from 'node:os'
-import { type Context, defineConfig } from 'dotori'
+import { type Context, defineConfig } from '@mokyabun/dotori'
 import desktop from './desktop'
 import developer from './developer'
 import game from './game'

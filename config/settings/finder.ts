@@ -1,4 +1,4 @@
-import type { Context } from 'dotori'
+import type { Context } from '@mokyabun/dotori'
 
 const finderListColumns = [
     { identifier: 'name', visible: true, ascending: true, width: 300 },

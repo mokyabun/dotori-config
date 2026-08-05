@@ -1,4 +1,4 @@
-import type { Context } from 'dotori'
+import type { Context } from '@mokyabun/dotori'
 
 // macOS Sequoia 15.7.7 기준으로 현재 Desktop & Dock / Mission Control 상태를 보존한다.
 // Apple Support: https://support.apple.com/guide/mac-help/change-desktop-dock-settings-mchlp1119/mac

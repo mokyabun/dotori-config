@@ -1,4 +1,4 @@
-import type { Context } from 'dotori'
+import type { Context } from '@mokyabun/dotori'
 
 const fnGlobeToLeftControlMapping = JSON.stringify({
     UserKeyMapping: [

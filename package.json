@@ -1,18 +1,16 @@
 {
   "name": "dotori-config",
-  "description": "A personal Bun-powered declarative setup tool for macOS",
-  "module": "src/index.ts",
+  "private": true,
+  "description": "Personal macOS configuration powered by @mokyabun/dotori",
   "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./cli": "./src/cli.ts",
-    "./providers": "./src/providers/index.ts"
-  },
-  "bin": {
-    "dotori": "./src/cli.ts"
-  },
   "scripts": {
-    "dotori": "bun run src/cli.ts",
+    "dotori": "bun run main.ts",
+    "plan": "bun run main.ts plan",
+    "apply": "bun run main.ts apply",
+    "clean": "bun run main.ts clean",
+    "doctor": "bun run main.ts doctor",
+    "typecheck": "tsc --noEmit",
+    "check": "bun run typecheck && bun run lint",
     "format": "biome format --write",
     "lint": "biome check",
     "lint:fix": "biome check --fix"
@@ -20,17 +18,9 @@
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
     "@types/bun": "latest",
-    "@types/plist": "^3.0.5"
-  },
-  "peerDependencies": {
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "boxen": "^8.0.1",
-    "cac": "^7.0.0",
-    "ora": "^9.4.0",
-    "picocolors": "^1.1.1",
-    "plist": "^5.0.0",
-    "zod": "^4.4.3"
+    "@mokyabun/dotori": "^0.1.0"
   }
 }

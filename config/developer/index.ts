@@ -1,4 +1,4 @@
-import type { Context } from 'dotori'
+import type { Context } from '@mokyabun/dotori'
 import agent from './agent'
 import environment from './environment'
 import shell from './shell'

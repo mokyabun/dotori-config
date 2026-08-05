@@ -1,5 +1,5 @@
 import os from 'node:os'
-import type { Context } from 'dotori'
+import type { Context } from '@mokyabun/dotori'
 import desktopAndDock from './desktop-and-dock'
 import finder from './finder'
 import keyboard from './keyboard'

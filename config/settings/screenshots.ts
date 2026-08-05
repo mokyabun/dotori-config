@@ -1,4 +1,4 @@
-import type { Context } from 'dotori'
+import type { Context } from '@mokyabun/dotori'
 
 export default (ctx: Context) => {
     ctx.macos.plist('screenshots', 'com.apple.screencapture', {

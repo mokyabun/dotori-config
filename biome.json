@@ -12,6 +12,6 @@
         }
     },
     "files": {
-        "includes": ["src/**/*.{ts,tsx,js,jsx}", "config/**/*.{ts,tsx,js,jsx}"]
+        "includes": ["main.ts", "config/**/*.{ts,tsx,js,jsx}"]
     }
 }
