@@ -1,0 +1,33 @@
+# Meh (ctrl + alt): space navigation
+ctrl + alt - left  : $HOME/.config/yabai/space-action.sh focus prev
+ctrl + alt - right : $HOME/.config/yabai/space-action.sh focus next
+
+ctrl + alt + shift - left  : $HOME/.config/yabai/space-action.sh move prev
+ctrl + alt + shift - right : $HOME/.config/yabai/space-action.sh move next
+
+# Meh (ctrl + alt): display focus
+ctrl + alt - down : $HOME/.config/yabai/display-action.sh focus south
+ctrl + alt - up   : $HOME/.config/yabai/display-action.sh focus north
+ctrl + alt - 0x30 : $HOME/.config/yabai/display-action.sh focus next wrap  # tab
+
+ctrl + alt + shift - down : $HOME/.config/yabai/display-action.sh move south
+ctrl + alt + shift - up   : $HOME/.config/yabai/display-action.sh move north
+
+# Hyper (ctrl + alt + cmd): window focus
+ctrl + alt + cmd - left  : yabai -m window --focus west
+ctrl + alt + cmd - down  : yabai -m window --focus south
+ctrl + alt + cmd - right : yabai -m window --focus east
+ctrl + alt + cmd - up    : yabai -m window --focus north
+
+# Hyper + shift: move the focused window within the BSP tree
+ctrl + alt + cmd + shift - left  : yabai -m window --swap west
+ctrl + alt + cmd + shift - down  : yabai -m window --swap south
+ctrl + alt + cmd + shift - right : yabai -m window --swap east
+ctrl + alt + cmd + shift - up    : yabai -m window --swap north
+
+# toggle the focused window between tiled and floating
+ctrl + alt - m : $HOME/.config/yabai/toggle-window-float.sh
+
+# resize (aerospace resize smart +-50)
+ctrl + alt + cmd - 0x1B : $HOME/.config/yabai/resize-smart.sh -50  # minus
+ctrl + alt + cmd - 0x18 : $HOME/.config/yabai/resize-smart.sh 50   # equal

@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+readonly YABAI_BIN=/opt/homebrew/bin/yabai
+readonly YABAI_CONFIG_DIR=${XDG_CONFIG_HOME:-"$HOME/.config"}/yabai
+
+# scripting addition (requires the yabai sudoers rule)
+if sudo -n "$YABAI_BIN" --load-sa; then
+  "$YABAI_CONFIG_DIR/ensure-spaces.sh"
+fi
+"$YABAI_BIN" -m signal --remove dotori-dock-restarted 2>/dev/null || true
+"$YABAI_BIN" -m signal --add label=dotori-dock-restarted event=dock_did_restart \
+  action="sudo -n $YABAI_BIN --load-sa && $YABAI_CONFIG_DIR/ensure-spaces.sh"
+
+# Tile windows by default. Individual windows can be toggled with hyper + m.
+"$YABAI_BIN" -m config layout bsp
+
+# Match AeroSpace's on-window-detected callback: new windows start floating.
+"$YABAI_BIN" -m rule --remove default-floating 2>/dev/null || true
+"$YABAI_BIN" -m rule --add label=default-floating app=".*" manage=off
+
+# gaps (aerospace [gaps])
+"$YABAI_BIN" -m config top_padding    7
+"$YABAI_BIN" -m config bottom_padding 7
+"$YABAI_BIN" -m config left_padding   7
+"$YABAI_BIN" -m config right_padding  55
+"$YABAI_BIN" -m config window_gap     7
+"$YABAI_BIN" -m config window_placement second_child
+
+# Keep every window fully opaque.
+"$YABAI_BIN" -m config window_opacity off
+"$YABAI_BIN" -m config active_window_opacity 1.0
+"$YABAI_BIN" -m config normal_window_opacity 1.0
+
+# Notify Hammerspoon once per processed yabai event. Labelled signals make this
+# file safe to run repeatedly without accumulating duplicate callbacks.
+"$YABAI_BIN" -m signal --remove dotori-space-changed 2>/dev/null || true
+"$YABAI_BIN" -m signal --add label=dotori-space-changed event=space_changed \
+  action="$YABAI_CONFIG_DIR/notify.sh ws \"\$YABAI_SPACE_INDEX\""
+
+for event in space_created space_destroyed; do
+  label="dotori-$event"
+  "$YABAI_BIN" -m signal --remove "$label" 2>/dev/null || true
+  "$YABAI_BIN" -m signal --add label="$label" event="$event" \
+    action="$YABAI_CONFIG_DIR/notify.sh refresh"
+done
