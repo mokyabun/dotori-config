@@ -35,7 +35,7 @@ return {
 		"com.apple.shortcuts", -- Shortcuts
 		"com.apple.Stickies", -- Stickies
 		"com.apple.stocks", -- Stocks
-		"com.apple.systempreferences", -- System Settings
+		-- "com.apple.systempreferences", -- System Settings
 		"com.apple.TV", -- TV
 		"com.apple.TextEdit", -- TextEdit
 		"com.apple.helpviewer", -- Tips
