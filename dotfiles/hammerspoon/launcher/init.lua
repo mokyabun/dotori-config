@@ -4,10 +4,56 @@ local apps = require("launcher.apps")
 local frecency = require("launcher.frecency")
 local commands = require("launcher.commands")
 
+local YABAI_BIN = "/opt/homebrew/bin/yabai"
+
 local chooser
 local appWatcher
 local registry = {}
 local pendingLaunches = {}
+local focusTasks = {}
+
+local function openApp(path, bundleId)
+	-- Avoid recording the same launch twice when the application watcher fires.
+	if not hs.application.get(bundleId) then
+		pendingLaunches[bundleId] = true
+	end
+	hs.task.new("/usr/bin/open", nil, { path }):start()
+end
+
+local function launchOrFocusApp(handler)
+	local app = hs.application.get(handler.bundleId)
+	if not app then
+		openApp(handler.path, handler.bundleId)
+		return
+	end
+
+	local window = app:mainWindow() or app:focusedWindow()
+	if not window then
+		local windows = app:allWindows()
+		window = windows[1]
+	end
+	if not window then
+		openApp(handler.path, handler.bundleId)
+		return
+	end
+
+	local task
+	task = hs.task.new(YABAI_BIN, function(exitCode)
+		if focusTasks[handler.bundleId] == task then
+			focusTasks[handler.bundleId] = nil
+		end
+		if exitCode ~= 0 then
+			openApp(handler.path, handler.bundleId)
+		end
+	end, { "-m", "window", "--focus", tostring(window:id()) })
+
+	if not task then
+		openApp(handler.path, handler.bundleId)
+		return
+	end
+	focusTasks[handler.bundleId] = task
+	task:start()
+end
 
 local function buildChoices()
 	registry = {}
@@ -65,8 +111,7 @@ local function onChoice(item)
 		handler.fn()
 	else
 		frecency.record(handler.bundleId)
-		pendingLaunches[handler.bundleId] = true
-		hs.task.new("/usr/bin/open", nil, { handler.path }):start()
+		launchOrFocusApp(handler)
 	end
 end
 
