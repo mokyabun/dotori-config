@@ -28,6 +28,8 @@ export default (ctx: Context) => {
     ctx.brew.install('eza')
     ctx.brew.install('fzf')
 
+    ctx.brew.install('smartmontools')
+
     ctx.file.symlink('~/.config/shell', '../dotfiles/shell')
     ctx.file.symlink('~/.config/fish', '../dotfiles/fish')
     ctx.file.symlink('~/.config/starship.toml', '../dotfiles/shell/starship.toml')
