@@ -1,7 +1,6 @@
 import type { Context } from '@mokyabun/dotori'
 
 export default (ctx: Context) => {
-    ctx.brew.cask('discord')
     ctx.brew.cask('parsec')
     ctx.brew.cask('brave-browser')
     ctx.brew.cask('jordanbaird-ice')

@@ -2,6 +2,7 @@ import os from 'node:os'
 import { type Context, defineConfig } from '@mokyabun/dotori'
 import desktop from './desktop'
 import developer from './developer'
+import discord, { discordHooks } from './discord'
 import game from './game'
 import macmini from './macmini'
 import qol from './qol'
@@ -16,6 +17,7 @@ export default defineConfig((ctx: Context) => {
 
     developer(ctx)
 
+    ctx.group('discord', (g) => discord(g), { hooks: discordHooks })
     ctx.group('qol', (g) => qol(g))
     ctx.group('sync', (g) => sync(g))
     ctx.group('desktop', (g) => desktop(g))
