@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline';"
+    />
+    <title>Dotori Notification</title>
+    __NOTIFY_STYLE__
+  </head>
+  <body>
+    <main class="toast" aria-live="polite" aria-hidden="true">
+      <span id="standard" class="standard">
+        <span id="icon" class="icon" hidden></span>
+        <span class="copy">
+          <strong id="title"></strong>
+          <small id="subtitle" hidden></small>
+        </span>
+      </span>
+      <span id="compact" class="compact-copy" hidden>
+        <span id="label" class="compact-label"></span>
+        <strong id="value" class="compact-value"></strong>
+      </span>
+    </main>
+    __NOTIFY_SCRIPT__
+  </body>
+</html>
