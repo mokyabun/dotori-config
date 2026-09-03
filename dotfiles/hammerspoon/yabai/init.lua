@@ -3,14 +3,13 @@ local colors = require("lib.colors")
 local notify = require("lib.notify")
 local palette = colors.dracula
 
-local layoutIcons = { bsp = "󰕰", tiling = "󰕰", floating = "󰖲" }
 local layoutNames = { bsp = "BSP", tiling = "BSP", floating = "Floating" }
 
-local function showLayout(layout, subtitle)
+local function showLayout(label, layout)
 	notify.show({
-		icon = layoutIcons[layout] or "◇",
-		title = layoutNames[layout] or layout,
-		subtitle = subtitle,
+		compact = true,
+		label = label,
+		value = layoutNames[layout] or layout,
 		color = layout == "floating" and palette.cyan or palette.purple,
 	})
 end
@@ -18,16 +17,16 @@ end
 socket
 	.on("yabai", "ws", function(_, workspace)
 		notify.show({
-			icon = "WS",
-			title = "Workspace " .. workspace,
-			subtitle = "yabai",
+			compact = true,
+			label = "Workspace",
+			value = workspace,
 			color = palette.purple,
 		})
 	end)
 	.on("yabai", "layout", function(_, layout)
-		showLayout(layout, "Space layout")
+		showLayout("Layout", layout)
 	end)
 	.on("yabai", "window-layout", function(_, layout)
-		showLayout(layout, "Window layout")
+		showLayout("Window", layout)
 	end)
 	.start()
