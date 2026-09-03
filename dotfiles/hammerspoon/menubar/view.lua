@@ -1,197 +1,184 @@
 local C = require("menubar.constants")
 
 local View = {}
-
--- entries[screenUUID] = { canvas = hs.canvas, h = number, screen = hs.screen }
 local entries = {}
-
+local latestState = {}
+local watcher, reloadTimer
+local source = debug.getinfo(1, "S").source:sub(2)
+local assetDir = source:match("^(.*)/[^/]+$") .. "/web/"
 local DAYS = { "SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT" }
 
-local function styled(str, size, color)
-	return hs.styledtext.new(str, {
-		font = { name = C.FONT, size = size },
-		color = color,
-		paragraphStyle = { alignment = "center" },
-	})
+local function readAsset(name)
+	local file, err = io.open(assetDir .. name, "r")
+	if not file then error(err) end
+	local contents = file:read("*a")
+	file:close()
+	return contents
 end
 
-local function screenWorkspaces(state, screen)
-	local name = screen:getUUID()
-	return (name and state.workspacesByMonitorName and state.workspacesByMonitorName[name]) or state.workspaces
+-- Inline local assets so this PoC needs neither a server nor file:// access.
+-- The source files remain independently editable and browser-previewable.
+local function document()
+	local html = readAsset("index.html")
+	local css = readAsset("menubar.css")
+	local js = readAsset("menubar.js")
+	html = html:gsub('<link rel="stylesheet" href="menubar.css">', function()
+		return "<style>" .. css .. "</style>"
+	end)
+	return (html:gsub('<script src="menubar.js"></script>', function()
+		return "<script>" .. js .. "</script>"
+	end))
 end
 
-local function screenIsFullscreen(state, screen)
-	local name = screen:getUUID()
-	return name and state.fullscreenByMonitorName and state.fullscreenByMonitorName[name] or false
+local function payload(entry)
+	local state = latestState
+	local now = os.time()
+	return {
+		screen = entry.key,
+		workspaces = (state.workspacesByMonitorName or {})[entry.key] or state.workspaces or {},
+		focused = state.focused,
+		power = state.power or "—",
+		cpu = state.cpu or "—",
+		ram = state.ram or "—",
+		caffeinate = state.caffeinate or {},
+		clock = { day = DAYS[tonumber(os.date("%w", now)) + 1], date = os.date("%m.%d", now), time = os.date("%H:%M", now) },
+	}
 end
 
-local function updateVisibility(entry, state)
-	if screenIsFullscreen(state, entry.screen) then
-		entry.canvas:hide()
-	else
-		entry.canvas:show()
+local function updateVisibility(entry)
+	local fullscreen = (latestState.fullscreenByMonitorName or {})[entry.key]
+	local visible = entry.ready and not fullscreen
+	if visible and not entry.webview:isVisible() then
+		entry.webview:show()
+	elseif not visible and entry.webview:isVisible() then
+		entry.webview:hide()
 	end
 end
 
-local function drawOn(canvas, h, state, screen)
-	canvas:replaceElements()
-
-	local w = C.BAR_W
-
-	-- Background (full height)
-	canvas:appendElements({
-		type = "rectangle",
-		action = "fill",
-		fillColor = C.BG,
-		frame = { x = 0, y = 0, w = w, h = h },
-	})
-
-	local function divLine(dy)
-		canvas:appendElements({
-			type = "rectangle",
-			action = "fill",
-			fillColor = C.DIV,
-			frame = { x = 6, y = dy, w = w - 12, h = C.DIV_H },
-		})
-	end
-
-	local function textItem(str, size, color, iy, id)
-		canvas:appendElements({
-			id = id,
-			type = "text",
-			text = styled(str, size, color),
-			frame = {
-				x = 0,
-				y = iy + math.floor((C.ITEM_H - size) / 2),
-				w = w,
-				h = size + 2,
-			},
-		})
-	end
-
-	-- TOP: day / date / time
-	local t = os.time()
-	local day = DAYS[tonumber(os.date("%w", t)) + 1]
-
-	textItem(day, C.DAY_SIZE, C.DIM, C.PAD + C.MARGIN_Y, "day")
-	textItem(os.date("%m.%d", t), C.DATE_SIZE, C.MUTED, C.PAD + C.MARGIN_Y + C.ITEM_H, "date")
-	textItem(os.date("%H:%M", t), C.TIME_SIZE, C.TEXT, C.PAD + C.MARGIN_Y + 2 * C.ITEM_H, "clock")
-
-	local topDiv = C.PAD + C.MARGIN_Y + 3 * C.ITEM_H + C.SECTION_GAP
-	divLine(topDiv)
-
-	-- BOTTOM: caffeinate status, then compact system metrics
-	local caffeine = state.caffeinate or {}
-	local caffeineText = "IDLE"
-	local caffeineColor = C.DIM
-	if caffeine.display then
-		caffeineText = "CAF"
-		caffeineColor = C.GOOD
-	elseif caffeine.system then
-		caffeineText = "SYS"
-		caffeineColor = C.WARN
-	end
-
-	local caffeineBlockH = C.ITEM_H
-	local metricsBlockH = 3 * C.ITEM_H + 2 * C.ITEM_GAP
-	local bottomBlockH = caffeineBlockH + metricsBlockH + 2 * C.SECTION_GAP + C.DIV_H
-	local botDiv = h - C.PAD - bottomBlockH - C.SECTION_GAP - C.DIV_H
-	divLine(botDiv)
-	local bottomY = botDiv + C.DIV_H + C.SECTION_GAP
-	textItem(caffeineText, C.CAFFEINE_SIZE, caffeineColor, bottomY)
-
-	local metricsDiv = bottomY + caffeineBlockH + C.SECTION_GAP
-	divLine(metricsDiv)
-	local metricsY = metricsDiv + C.DIV_H + C.SECTION_GAP
-	textItem(state.power or "—", C.POWER_SIZE, C.DIM, metricsY, "power")
-	textItem(state.cpu or "—", C.METRIC_SIZE, C.MUTED, metricsY + C.ITEM_H + C.ITEM_GAP, "cpu")
-	textItem(state.ram or "—", C.METRIC_SIZE, C.MUTED, metricsY + 2 * (C.ITEM_H + C.ITEM_GAP), "ram")
-
-	-- MIDDLE: workspaces, vertically centered in the remaining space
-	local midStart = topDiv + C.DIV_H + C.SECTION_GAP
-	local midEnd = botDiv - C.SECTION_GAP
-	local workspaces = screenWorkspaces(state, screen)
-	local wsCount = #workspaces
-	local wsBlockH = wsCount * C.ITEM_H + math.max(0, wsCount - 1) * C.ITEM_GAP
-	local wsY = midStart + math.floor((midEnd - midStart - wsBlockH) / 2)
-
-	for i, ws in ipairs(workspaces) do
-		local active = ws == state.focused
-		if active then
-			canvas:appendElements({
-				type = "rectangle",
-				action = "fill",
-				fillColor = C.ACTIVE_BG,
-				frame = { x = 4, y = wsY, w = w - 8, h = C.ITEM_H },
-			})
+local function sendState(entry)
+	if not entry.ready then return end
+	local event = hs.json.encode({ type = "menubar.update", payload = payload(entry) })
+	entry.webview:evaluateJavaScript("window.plater.receive(" .. event .. ")", function(_, err)
+		if entries[entry.key] ~= entry then return end
+		-- Hammerspoon 1.1.1 returns { code = 0 } even on success.
+		if err and err.code ~= 0 then
+			entry.error = hs.inspect(err)
+			hs.printf("menubar web UI: %s", entry.error)
+			return
 		end
-		textItem(ws, C.WS_SIZE, active and C.TEXT or C.MUTED, wsY)
-		wsY = wsY + C.ITEM_H + (i < wsCount and C.ITEM_GAP or 0)
+		entry.error = nil
+		updateVisibility(entry)
+	end)
+end
+
+local function destroyWindows()
+	local previous = entries
+	entries = {}
+	for _, entry in pairs(previous) do
+		entry.controller:setCallback(nil)
+		entry.webview:hide():delete()
 	end
+end
+
+function View.reload()
+	local ok, html = pcall(document)
+	if not ok then
+		hs.printf("menubar reload failed; keeping current UI: %s", html)
+		return false
+	end
+	for _, entry in pairs(entries) do
+		entry.ready = false
+		entry.error = nil
+		entry.webview:html(html)
+	end
+	return true
 end
 
 function View.init(state)
-	-- A canvas that joins every Space can leave a stale copy behind when macOS
-	-- moves screens between Spaces while displays reconnect after wake. Reusing
-	-- and moving that canvas then makes the old and new copies overlap. Hide all
-	-- bars before deleting them, and rebuild from the settled screen topology.
-	for _, entry in pairs(entries) do
-		entry.canvas:hide()
-		entry.canvas:delete()
-	end
-	entries = {}
-
+	local html = document()
+	latestState = state
+	destroyWindows()
 	for _, screen in ipairs(hs.screen.allScreens()) do
+		-- Use the visible frame so the native macOS menubar is never covered.
+		-- These margins mirror yabai's 7px outer padding.
+		local sf = screen:frame()
 		local key = screen:getUUID() or tostring(screen:id())
-		local sf = screen:fullFrame()
-		local frame = {
-			x = sf.x + sf.w - C.MARGIN_X - C.BAR_W,
-			y = sf.y,
-			w = C.BAR_W,
-			h = sf.h,
-		}
-		local canvas = hs.canvas.new(frame)
-		canvas:level(hs.canvas.windowLevels["mainMenu"])
-		canvas:behavior({ "canJoinAllSpaces", "stationary" })
-		local entry = { canvas = canvas, h = sf.h, screen = screen }
+		local entry = { key = key, ready = false }
 		entries[key] = entry
-
-		drawOn(entry.canvas, entry.h, state, entry.screen)
-		updateVisibility(entry, state)
+		entry.controller = hs.webview.usercontent.new("plater")
+		entry.controller:setCallback(function(message)
+			local event = message.body
+			if entries[key] == entry and type(event) == "table" and event.type == "ui.ready" then
+				entry.ready = true
+				sendState(entry)
+			end
+		end)
+		entry.webview = hs.webview.new({
+			x = sf.x + sf.w - C.MARGIN_X - C.BAR_W,
+			y = sf.y + C.MARGIN_Y,
+			w = C.BAR_W,
+			h = sf.h - C.MARGIN_Y * 2,
+		},
+			{ developerExtrasEnabled = true, javaScriptCanOpenWindowsAutomatically = false }, entry.controller)
+			:windowStyle({ "borderless", "nonactivating" })
+			:allowTextEntry(false)
+			:allowNewWindows(false)
+			:transparent(true)
+			:shadow(false)
+			:level(hs.drawing.windowLevels.mainMenu)
+			:behaviorAsLabels({ "canJoinAllSpaces", "stationary", "ignoresCycle" })
+			:windowTitle("Plater Menubar")
+		-- html() uses about:blank; block navigation to any external content.
+		entry.webview:policyCallback(function(action, _, details)
+			if action ~= "navigationAction" then return true end
+			local url = details.request.URL
+			if type(url) == "table" then url = url.url end
+			return url == "about:blank"
+		end)
+		entry.webview:html(html)
+	end
+	if not watcher then
+		watcher = hs.pathwatcher.new(assetDir, function(paths)
+			for _, path in ipairs(paths) do
+				if path:match("%.html$") or path:match("%.css$") or path:match("%.js$") then
+					if reloadTimer then reloadTimer:stop() end
+					reloadTimer = hs.timer.doAfter(0.2, function()
+						reloadTimer = nil
+						View.reload()
+					end)
+					break
+				end
+			end
+		end):start()
 	end
 end
 
 function View.refresh(state)
-	for _, e in pairs(entries) do
-		drawOn(e.canvas, e.h, state, e.screen)
-		updateVisibility(e, state)
+	latestState = state
+	for _, entry in pairs(entries) do
+		updateVisibility(entry)
+		sendState(entry)
 	end
 end
 
 function View.refreshClock()
-	local t = os.time()
-	local day = DAYS[tonumber(os.date("%w", t)) + 1]
-	for _, entry in pairs(entries) do
-		entry.canvas["day"].text = styled(day, C.DAY_SIZE, C.DIM)
-		entry.canvas["date"].text = styled(os.date("%m.%d", t), C.DATE_SIZE, C.MUTED)
-		entry.canvas["clock"].text = styled(os.date("%H:%M", t), C.TIME_SIZE, C.TEXT)
-	end
+	for _, entry in pairs(entries) do sendState(entry) end
 end
 
-function View.refreshMetrics(state)
-	for _, entry in pairs(entries) do
-		entry.canvas["power"].text = styled(state.power or "—", C.POWER_SIZE, C.DIM)
-		entry.canvas["cpu"].text = styled(state.cpu or "—", C.METRIC_SIZE, C.MUTED)
-		entry.canvas["ram"].text = styled(state.ram or "—", C.METRIC_SIZE, C.MUTED)
+View.refreshMetrics = View.refresh
+
+function View.status()
+	local result = {}
+	for key, entry in pairs(entries) do
+		result[key] = { ready = entry.ready, visible = entry.webview:isVisible(), error = entry.error }
 	end
+	return result
 end
 
 function View.destroy()
-	for _, e in pairs(entries) do
-		e.canvas:hide()
-		e.canvas:delete()
-	end
-	entries = {}
+	if watcher then watcher:stop(); watcher = nil end
+	if reloadTimer then reloadTimer:stop(); reloadTimer = nil end
+	destroyWindows()
 end
 
 return View

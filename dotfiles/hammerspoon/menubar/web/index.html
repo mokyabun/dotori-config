@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src data:;">
+  <title>Plater Menubar</title>
+  <link rel="stylesheet" href="menubar.css">
+</head>
+<body>
+  <main class="bar" aria-label="Desktop status">
+    <header class="clock" aria-label="Date and time">
+      <div id="day" class="item day">—</div>
+      <div id="date" class="item date">—</div>
+      <time id="clock" class="item time">—</time>
+    </header>
+    <div class="divider"></div>
+    <section class="workspace-area" aria-label="Workspaces">
+      <ol id="workspaces" class="workspaces"></ol>
+      <span id="empty" class="item empty" title="Waiting for workspace data">—</span>
+    </section>
+    <div class="divider"></div>
+    <footer class="system" aria-label="System status">
+      <div id="caffeinate" class="item caffeine" title="Sleep prevention disabled">IDLE</div>
+      <div class="divider"></div>
+      <div class="metrics">
+        <div id="power" class="item power" title="System power">—</div>
+        <div id="cpu" class="item metric" title="CPU usage">—</div>
+        <div id="ram" class="item metric" title="Memory usage">—</div>
+      </div>
+    </footer>
+  </main>
+  <script src="menubar.js"></script>
+</body>
+</html>
