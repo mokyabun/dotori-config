@@ -1,9 +1,9 @@
 local config = require("clipboard.constants")
+local view = require("clipboard.view")
 
 local Search = {}
 
 local db
-local chooser
 local rowIdByUuid = {}
 
 local function formatTimeAgo(timestamp)
@@ -29,20 +29,17 @@ local function buildChoices()
 		local uuid = tostring(row.id)
 		rowIdByUuid[uuid] = row.id
 		choices[#choices + 1] = {
-			text = row.preview,
-			subText = formatTimeAgo(row.created_at) .. " • " .. row.len .. " chars",
-			uuid = uuid,
+			id = uuid,
+			title = row.preview,
+			subtitle = formatTimeAgo(row.created_at) .. " • " .. row.len .. " chars",
 		}
 	end
 
 	return choices
 end
 
-local function onChoice(item)
-	if not item then
-		return
-	end
-	local rowId = rowIdByUuid[item.uuid]
+local function pasteChoice(id)
+	local rowId = rowIdByUuid[id]
 	if not rowId then
 		return
 	end
@@ -56,22 +53,48 @@ local function onChoice(item)
 	end
 end
 
+local function activeScreen()
+	local focused = hs.window.focusedWindow()
+	return (focused and focused:screen()) or hs.mouse.getCurrentScreen() or hs.screen.mainScreen()
+end
+
+local function windowFrame()
+	local frame = activeScreen():frame()
+	local width = math.min(config.window.width, frame.w - 40)
+	local height = math.min(config.window.height, frame.h - 40)
+	return {
+		x = frame.x + math.floor((frame.w - width) / 2),
+		y = frame.y + math.floor((frame.h - height) * 0.36),
+		w = width,
+		h = height,
+	}
+end
+
+local function handleEvent(event)
+	if event.type == "clipboard.close" then
+		view.hide()
+	elseif event.type == "clipboard.select" then
+		local id = event.payload and event.payload.id
+		view.hide()
+		pasteChoice(id)
+	end
+end
+
 function Search.init(database)
 	db = database
-
-	chooser = hs.chooser.new(onChoice)
-	chooser:placeholderText("Search clipboard…")
-	chooser:searchSubText(false)
-	chooser:width(config.chooser.width)
-	chooser:rows(config.chooser.rows)
-	chooser:bgDark(true)
-	chooser:fgColor(config.chooser.fgColor)
-	chooser:subTextColor(config.chooser.subTextColor)
+	view.init(handleEvent)
 end
 
 function Search.show()
-	chooser:choices(buildChoices())
-	chooser:show()
+	view.open(windowFrame(), { type = "clipboard.open", payload = { choices = buildChoices() } })
+end
+
+function Search.hide()
+	view.hide()
+end
+
+function Search.status()
+	return view.status()
 end
 
 return Search
