@@ -43,3 +43,5 @@ for event in space_created space_destroyed; do
   "$YABAI_BIN" -m signal --add label="$label" event="$event" \
     action="$YABAI_CONFIG_DIR/notify.sh refresh"
 done
+
+"$YABAI_BIN" -m config window_shadow off
