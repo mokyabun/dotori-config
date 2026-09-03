@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline';"
+    />
+    <title>Dotori AltTab</title>
+    __ALTTAB_STYLE__
+  </head>
+  <body>
+    <main class="switcher-shell" aria-label="Window switcher" aria-hidden="true">
+      <section id="window-list" class="window-list" role="listbox" aria-label="Open windows"></section>
+    </main>
+    __ALTTAB_SCRIPT__
+  </body>
+</html>
