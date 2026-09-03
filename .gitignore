@@ -4,6 +4,8 @@ node_modules
 # output
 out
 dist
+!dotfiles/hammerspoon/launcher/web/dist/
+!dotfiles/hammerspoon/launcher/web/dist/index.html
 *.tgz
 
 # code coverage

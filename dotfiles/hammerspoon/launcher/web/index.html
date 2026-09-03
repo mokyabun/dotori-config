@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline';" />
+  <title>Dotori Launcher</title>
+  __LAUNCHER_STYLE__
+</head>
+
+<body>
+  <main class="launcher-shell" aria-label="Application launcher" aria-hidden="true">
+    <section class="launcher-panel">
+      <header class="search-region">
+        <label class="search-box" for="launcher-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5"></circle>
+            <path d="m16 16 4 4"></path>
+          </svg>
+          <input id="launcher-search" type="text" placeholder="" autocomplete="off" autocapitalize="off"
+            spellcheck="false" aria-label="" aria-controls="launcher-results" aria-autocomplete="list" />
+        </label>
+      </header>
+
+      <div id="launcher-results" class="results" role="listbox" aria-label="Launcher results"></div>
+    </section>
+  </main>
+  __LAUNCHER_SCRIPT__
+</body>
+
+</html>
