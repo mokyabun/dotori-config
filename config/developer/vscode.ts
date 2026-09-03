@@ -118,13 +118,12 @@ export default (ctx: Context) => {
     ctx.vscode.profile('node-modern')
     ctx.vscode.settings('node-modern', 'patch', {
         ...BASE_SETTINGS,
-        'editor.defaultFormatter': 'biomejs.biome',
+        'editor.defaultFormatter': 'oxc.oxc-vscode',
         '[typescript, javascript, typescriptreact, javascriptreact, json, jsonc]': {
-            'editor.defaultFormatter': 'biomejs.biome',
+            'editor.defaultFormatter': 'oxc.oxc-vscode',
         },
         'editor.codeActionsOnSave': {
-            'source.organizeImports.biome': 'explicit',
-            'source.fixAll.biome': 'explicit',
+            'source.fixAll.oxc': 'explicit',
         },
         'json.schemaDownload.trustedDomains': {
             'https://schemastore.azurewebsites.net/': true,
@@ -134,19 +133,19 @@ export default (ctx: Context) => {
             'https://json.schemastore.org/': true,
             'https://json-schema.org/': true,
             'https://developer.microsoft.com/json-schemas/': true,
-            'https://biomejs.dev': true,
         },
         'typescript.experimental.useTsgo': true,
         '[typescriptreact]': {
-            'editor.defaultFormatter': 'biomejs.biome',
+            'editor.defaultFormatter': 'oxc.oxc-vscode',
         },
-        'biome.configurationPath': '',
+        'oxc.enable.oxfmt': true,
+        'oxc.enable.oxlint': true,
         'svelte.enable-ts-plugin': true,
         'extensions.ignoreRecommendations': true,
     })
     ctx.vscode.extensions('node-modern', [
         ...BASE_EXTENSIONS,
-        'biomejs.biome',
+        'oxc.oxc-vscode',
         'bradlc.vscode-tailwindcss',
         'ritwickdey.liveserver',
         'TypeScriptTeam.native-preview',

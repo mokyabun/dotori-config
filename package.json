@@ -10,14 +10,16 @@
     "clean": "bun run main.ts clean",
     "doctor": "bun run main.ts doctor",
     "typecheck": "tsc --noEmit",
-    "check": "bun run typecheck && bun run lint",
-    "format": "biome format --write",
-    "lint": "biome check",
-    "lint:fix": "biome check --fix"
+    "check": "bun run typecheck && bun run format:check && bun run lint",
+    "format": "oxfmt main.ts config",
+    "format:check": "oxfmt --check main.ts config",
+    "lint": "oxlint main.ts config",
+    "lint:fix": "oxlint --fix main.ts config"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.0",
     "@types/bun": "latest",
+    "oxfmt": "^0.64.0",
+    "oxlint": "^1.79.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
