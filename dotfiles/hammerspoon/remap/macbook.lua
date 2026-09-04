@@ -20,7 +20,6 @@ local function mehKeyHandler(event)
 	if mehActive then
 		local flags = event:getFlags()
 		flags.ctrl = true
-		flags.cmd = true
 		flags.alt = true
 		event:setFlags(flags)
 	end
