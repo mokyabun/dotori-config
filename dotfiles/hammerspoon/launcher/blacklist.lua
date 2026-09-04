@@ -31,7 +31,7 @@ return {
 		"com.apple.Preview", -- Preview
 		"com.apple.QuickTimePlayerX", -- QuickTime Player
 		"com.apple.reminders", -- Reminders
-		"com.apple.Safari", -- Safari
+		-- "com.apple.Safari", -- Safari
 		"com.apple.shortcuts", -- Shortcuts
 		"com.apple.Stickies", -- Stickies
 		"com.apple.stocks", -- Stocks
