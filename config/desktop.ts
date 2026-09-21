@@ -15,10 +15,6 @@ export default (ctx: Context) => {
         ...command,
     ]
 
-    ctx.brew.tap('thusvill/livewallpaper')
-    ctx.brew.trustCask('thusvill/livewallpaper/livewallpaper')
-    ctx.brew.cask('livewallpaper')
-
     // yabai + skhd
     ctx.brew.tap('koekeishiya/formulae')
     ctx.brew.install('koekeishiya/formulae/yabai')
@@ -34,7 +30,6 @@ export default (ctx: Context) => {
         StandardErrorPath: `${home}/Library/Logs/yabai.err.log`,
         ProcessType: 'Interactive',
         RunAtLoad: true,
-        KeepAlive: true,
     })
     ctx.launchd.agent('skhd', {
         ProgramArguments: waitForConfig(skhdConfig, ['/opt/homebrew/bin/skhd', '-c', skhdConfig]),
@@ -45,7 +40,6 @@ export default (ctx: Context) => {
         StandardErrorPath: `${home}/Library/Logs/skhd.err.log`,
         ProcessType: 'Interactive',
         RunAtLoad: true,
-        KeepAlive: true,
     })
 
     // Dependencies for Hammerspoon
@@ -67,7 +61,6 @@ export default (ctx: Context) => {
             '/Applications/Hammerspoon.app/Contents/MacOS/Hammerspoon',
         ]),
         RunAtLoad: true,
-        KeepAlive: true,
     })
 
     // Jankeyborder
@@ -82,6 +75,5 @@ export default (ctx: Context) => {
             'width=7.0',
         ],
         RunAtLoad: true,
-        KeepAlive: true,
     })
 }

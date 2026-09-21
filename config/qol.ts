@@ -7,7 +7,6 @@ export default (ctx: Context) => {
     ctx.launchd.agent('ice', {
         ProgramArguments: ['/Applications/Ice.app/Contents/MacOS/Ice'],
         RunAtLoad: true,
-        KeepAlive: true,
     })
     ctx.brew.cask('bambu-studio')
     ctx.brew.cask('blender')

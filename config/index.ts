@@ -21,7 +21,7 @@ export default defineConfig((ctx: Context) => {
     ctx.group('qol', (g) => qol(g))
     ctx.group('sync', (g) => sync(g))
     ctx.group('desktop', (g) => desktop(g))
-    if (hostname === 'macmini') ctx.group('macmini', (g) => macmini(g))
+    if (hostname.includes('macmini')) ctx.group('macmini', (g) => macmini(g))
 
     ctx.group('settings', (g) => settings(g), {
         hooks: {

@@ -5,6 +5,5 @@ export default (ctx: Context) => {
     ctx.launchd.agent('linearmouse', {
         ProgramArguments: ['/Applications/LinearMouse.app/Contents/MacOS/LinearMouse'],
         RunAtLoad: true,
-        KeepAlive: true,
     })
 }
