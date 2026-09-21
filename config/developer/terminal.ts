@@ -1,8 +1,8 @@
 import type { Context } from '@mokyabun/dotori'
 
 export default (ctx: Context) => {
-    ctx.brew.cask('kitty')
+    ctx.brew.cask('ghostty')
     ctx.brew.cask('font-jetbrains-mono-nerd-font')
 
-    ctx.file.symlink('~/.config/kitty', '../dotfiles/kitty')
+    ctx.file.symlink('~/.config/ghostty', '../dotfiles/ghostty')
 }
