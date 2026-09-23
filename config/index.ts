@@ -13,8 +13,6 @@ import sync from './sync'
 export default defineConfig((ctx: Context) => {
     const hostname = process.env.HOSTNAME || os.hostname()
 
-    ctx.brew.install('mas')
-
     developer(ctx)
 
     ctx.group('discord', (g) => discord(g), { hooks: discordHooks })

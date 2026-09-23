@@ -29,7 +29,4 @@ export default (ctx: Context) => {
     ctx.brew.trustFormula('hashicorp/tap/terraform')
     ctx.brew.install('terraform')
     ctx.brew.install('ansible')
-
-    // Native/app toolchains
-    ctx.brew.install('cocoapods')
 }
