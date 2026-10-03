@@ -1,14 +1,17 @@
 set -g fish_greeting
 set -g fish_autosuggestion_enabled 1
-set -g fish_color_autosuggestion 9ca0b0
-set -g fish_color_command 1e66f5
-set -g fish_color_param 4c4f69
-set -g fish_color_error d20f39
-set -g fish_color_quote 40a02b
-set -g fish_color_redirection ea76cb
-set -g fish_color_operator df8e1d
+set -g fish_color_normal f8f8f2
+set -g fish_color_autosuggestion 6272a4
+set -g fish_color_comment 6272a4
+set -g fish_color_command 8be9fd
+set -g fish_color_param ffb86c
+set -g fish_color_error ff5555
+set -g fish_color_quote f1fa8c
+set -g fish_color_redirection ff79c6
+set -g fish_color_operator ff79c6
+set -g fish_color_end bd93f9
 
-set -gx FZF_DEFAULT_OPTS '--height=40% --layout=reverse --border=rounded --info=inline --prompt="> " --pointer=">" --marker="+" --color=fg:#4c4f69,bg:#eff1f5,hl:#d20f39,fg+:#4c4f69,bg+:#ccd0da,hl+:#d20f39,info:#8839ef,prompt:#1e66f5,pointer:#df8e1d,marker:#40a02b,spinner:#179299,header:#8c8fa1,border:#acb0be'
+set -gx FZF_DEFAULT_OPTS '--height=40% --layout=reverse --border=rounded --info=inline --prompt="> " --pointer=">" --marker="+" --color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9,fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9,info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6,marker:#ff5555,spinner:#ffb86c,header:#6272a4,border:#6272a4'
 
 alias grep='rg'
 alias l='eza -lha --icons --git --group-directories-first'

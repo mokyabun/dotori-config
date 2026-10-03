@@ -3,15 +3,8 @@ import type { Context } from '@mokyabun/dotori'
 function bat(ctx: Context) {
     ctx.brew.install('bat')
 
-    ctx.file.block('~/.config/bat/config', 'bat', '--theme="Catppuccin Latte"\n--style="numbers,changes,header"')
-
-    // bat themes
-    const BAT_THEMES_DIR = '~/.config/bat/themes'
-    const BAT_THEME_BASE = 'https://github.com/catppuccin/bat/raw/main/themes'
-
-    for (const name of ['Catppuccin Latte']) {
-        ctx.file.download(`${BAT_THEMES_DIR}/${name}.tmTheme`, `${BAT_THEME_BASE}/${encodeURIComponent(name)}.tmTheme`)
-    }
+    // Dracula ships with bat, so no theme download / cache rebuild is needed.
+    ctx.file.block('~/.config/bat/config', 'bat', '--theme="Dracula"\n--style="numbers,changes,header"')
 }
 
 export default (ctx: Context) => {
@@ -37,9 +30,5 @@ export default (ctx: Context) => {
     // Keep zsh as the plain system/default shell. Terminal apps opt into fish.
     ctx.file.block('~/.zshrc', 'shell', 'source ~/.config/shell/shell.zsh')
 
-    ctx.group('development/shell/bat', bat, {
-        hooks: {
-            afterChange: [{ command: ['bat', 'cache', '--build'], description: 'rebuild bat theme cache' }],
-        },
-    })
+    ctx.group('development/shell/bat', bat)
 }
