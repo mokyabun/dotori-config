@@ -2,8 +2,18 @@
 
 add_newline = false
 palette = "dracula"
-format = "$directory$git_branch$git_status$nodejs$python$line_break$character"
+format = "$username$hostname$directory$git_branch$git_status$nodejs$python$line_break$character"
 right_format = "$cmd_duration$time"
+
+[username]
+show_always = true
+format = "[$user](cyan)"
+style_user = "cyan"
+style_root = "red"
+
+[hostname]
+ssh_only = false
+format = "[@$hostname](purple) "
 
 [character]
 success_symbol = "[>](green)"
@@ -19,11 +29,11 @@ fish_style_pwd_dir_length = 1
 [git_branch]
 format = " [$symbol$branch]($style)"
 symbol = "git:"
-style = "mauve"
+style = "purple"
 
 [git_status]
 format = "([$all_status$ahead_behind]($style))"
-style = "peach"
+style = "orange"
 conflicted = "="
 ahead = ">"
 behind = "<"
@@ -44,11 +54,11 @@ format = " [py $version](yellow)"
 
 [cmd_duration]
 min_time = 500
-format = "[$duration](overlay1) "
+format = "[$duration](comment) "
 
 [time]
 disabled = false
-format = "[$time](overlay1)"
+format = "[$time](comment)"
 time_format = "%H:%M"
 
 [palettes.dracula]
