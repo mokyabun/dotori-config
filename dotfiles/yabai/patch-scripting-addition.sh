@@ -24,7 +24,7 @@ if [ -z "${offset:-}" ]; then
   exit 0
 fi
 
-# Match the arm64e PAC ABI capability used by Dock.app on macOS 15.7.x.
+# Match the arm64e PAC ABI capability used by Dock.app on macOS 27.0.x (arm64e slice, capabilities 0x80).
 printf '\x80' |
   dd of="$LOADER" bs=1 seek=$((8 + architecture * 20 + 4)) count=1 conv=notrunc status=none
 printf '\x80' |
