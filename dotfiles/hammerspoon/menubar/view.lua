@@ -38,12 +38,19 @@ local function drawOn(canvas, h, state, screen)
 
 	local w = C.BAR_W
 
-	-- Background (full height)
+	-- Round the left edge, then fill the right edge back to square corners.
 	canvas:appendElements({
 		type = "rectangle",
 		action = "fill",
 		fillColor = C.BG,
+		roundedRectRadii = { xRadius = C.RADIUS, yRadius = C.RADIUS },
 		frame = { x = 0, y = 0, w = w, h = h },
+	})
+	canvas:appendElements({
+		type = "rectangle",
+		action = "fill",
+		fillColor = C.BG,
+		frame = { x = C.RADIUS, y = 0, w = w - C.RADIUS, h = h },
 	})
 
 	local function divLine(dy)
@@ -122,10 +129,11 @@ local function drawOn(canvas, h, state, screen)
 				type = "rectangle",
 				action = "fill",
 				fillColor = C.ACTIVE_BG,
+				roundedRectRadii = { xRadius = C.ACTIVE_RADIUS, yRadius = C.ACTIVE_RADIUS },
 				frame = { x = 4, y = wsY, w = w - 8, h = C.ITEM_H },
 			})
 		end
-		textItem(ws, C.WS_SIZE, active and C.TEXT or C.MUTED, wsY)
+		textItem(ws, C.WS_SIZE, active and C.ACCENT or C.MUTED, wsY)
 		wsY = wsY + C.ITEM_H + (i < wsCount and C.ITEM_GAP or 0)
 	end
 end

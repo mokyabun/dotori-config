@@ -11,7 +11,8 @@ return {
 	ITEM_GAP = 2,
 	SECTION_GAP = 6,
 	DIV_H = 1,
-	RADIUS = 2,
+	RADIUS = 12,
+	ACTIVE_RADIUS = 6,
 
 	-- Typography
 	FONT = "JetBrainsMono Nerd Font",
@@ -25,12 +26,13 @@ return {
 	METRIC_SIZE = 10,
 
 	-- Colors
-	BG = colors.withAlpha(palette.background, 0.96),
+	BG = palette.background,
 	ACTIVE_BG = palette.currentLine,
-	DIV = colors.withAlpha(palette.currentLine, 0.6),
+	DIV = palette.currentLine,
 	TEXT = palette.foreground,
 	MUTED = palette.comment,
-	DIM = colors.withAlpha(palette.comment, 0.72),
+	DIM = palette.comment,
+	ACCENT = palette.purple,
 	GOOD = palette.green,
 	WARN = palette.yellow,
 }
