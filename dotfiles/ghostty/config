@@ -1,7 +1,7 @@
 # Appearance
 font-family = JetBrainsMono Nerd Font
 # Korean fallback
-font-family = D2KodingLigature Nerd Font Mono
+font-family = D2Coding
 
 font-size = 13
 font-feature = -calt, -liga, -dlig

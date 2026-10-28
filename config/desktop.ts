@@ -10,7 +10,7 @@ export default (ctx: Context) => {
         '/bin/sh',
         '-c',
         'config=$1; shift; until [ -r "$config" ]; do /bin/sleep 1; done; exec "$@"',
-        'dotori-wait-for-config',
+        'dotori-wait-for-config',,
         config,
         ...command,
     ]
@@ -21,26 +21,26 @@ export default (ctx: Context) => {
     ctx.brew.install('koekeishiya/formulae/skhd')
     ctx.file.symlink('~/.config/yabai', '../dotfiles/yabai')
     ctx.file.symlink('~/.config/skhd', '../dotfiles/skhd')
-    ctx.launchd.agent('yabai', {
-        ProgramArguments: waitForConfig(yabaiConfig, ['/opt/homebrew/bin/yabai', '--config', yabaiConfig]),
-        EnvironmentVariables: {
-            PATH: launchdPath,
-        },
-        StandardOutPath: `${home}/Library/Logs/yabai.out.log`,
-        StandardErrorPath: `${home}/Library/Logs/yabai.err.log`,
-        ProcessType: 'Interactive',
-        RunAtLoad: true,
-    })
-    ctx.launchd.agent('skhd', {
-        ProgramArguments: waitForConfig(skhdConfig, ['/opt/homebrew/bin/skhd', '-c', skhdConfig]),
-        EnvironmentVariables: {
-            PATH: launchdPath,
-        },
-        StandardOutPath: `${home}/Library/Logs/skhd.out.log`,
-        StandardErrorPath: `${home}/Library/Logs/skhd.err.log`,
-        ProcessType: 'Interactive',
-        RunAtLoad: true,
-    })
+    // ctx.launchd.agent('yabai', {
+    //     ProgramArguments: waitForConfig(yabaiConfig, ['/opt/homebrew/bin/yabai', '--config', yabaiConfig]),
+    //     EnvironmentVariables: {
+    //         PATH: launchdPath,
+    //     },
+    //     StandardOutPath: `${home}/Library/Logs/yabai.out.log`,
+    //     StandardErrorPath: `${home}/Library/Logs/yabai.err.log`,
+    //     ProcessType: 'Interactive',
+    //     RunAtLoad: true,
+    // })
+    // ctx.launchd.agent('skhd', {
+    //     ProgramArguments: waitForConfig(skhdConfig, ['/opt/homebrew/bin/skhd', '-c', skhdConfig]),
+    //     EnvironmentVariables: {
+    //         PATH: launchdPath,
+    //     },
+    //     StandardOutPath: `${home}/Library/Logs/skhd.out.log`,
+    //     StandardErrorPath: `${home}/Library/Logs/skhd.err.log`,
+    //     ProcessType: 'Interactive',
+    //     RunAtLoad: true,
+    // })
 
     // Dependencies for Hammerspoon
     ctx.brew.cask('font-jetbrains-mono-nerd-font')
@@ -56,24 +56,26 @@ export default (ctx: Context) => {
     ctx.macos.defaults('hammerspoon', 'org.hammerspoon.Hammerspoon', {
         MJConfigFile: hammerspoonConfig,
     })
-    ctx.launchd.agent('hammerspoon', {
-        ProgramArguments: waitForConfig(hammerspoonConfig, [
-            '/Applications/Hammerspoon.app/Contents/MacOS/Hammerspoon',
-        ]),
-        RunAtLoad: true,
-    })
+    // ctx.launchd.agent('hammerspoon', {
+    //     ProgramArguments: waitForConfig(hammerspoonConfig, [
+    //         '/Applications/Hammerspoon.app/Contents/MacOS/Hammerspoon',
+    //     ]),
+    //     RunAtLoad: true,
+    // })
 
     // Jankeyborder
     ctx.brew.tap('felixkratz/formulae')
     ctx.brew.trustFormula('felixkratz/formulae/borders')
+
     ctx.brew.install('borders')
-    ctx.launchd.agent('jankeyborder', {
-        ProgramArguments: [
-            '/opt/homebrew/bin/borders',
-            'active_color=0xff7287fd',
-            'inactive_color=0x00000000',
-            'width=7.0',
-        ],
-        RunAtLoad: true,
-    })
+    ctx.file.symlink('~/.config/borders', '../dotfiles/borders')
+    // ctx.launchd.agent('jankeyborder', {
+    //     ProgramArguments: [
+    //         '/opt/homebrew/bin/borders',
+    //         'active_color=0xff7287fd',
+    //         'inactive_color=0x00000000',
+    //         'width=7.0',
+    //     ],
+    //     RunAtLoad: true,
+    // })
 }
