@@ -13,6 +13,8 @@ set -g fish_color_end bd93f9
 
 set -gx FZF_DEFAULT_OPTS '--height=40% --layout=reverse --border=rounded --info=inline --prompt="> " --pointer=">" --marker="+" --color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9,fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9,info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6,marker:#ff5555,spinner:#ffb86c,header:#6272a4,border:#6272a4'
 
+set -gx SOPS_EDITOR "code --wait"
+
 alias grep='rg'
 alias l='eza -lha --icons --git --group-directories-first'
 alias la='eza -la --icons --git --group-directories-first'
@@ -25,6 +27,15 @@ alias path-lines='printf "%s\n" $PATH'
 alias mkdirp='mkdir -p'
 alias serve='python3 -m http.server'
 alias rls='rsync -navi --delete'
+
+function z --description 'Attach to or create a zellij session named after the project'
+    if set -q argv[1]
+        zellij attach --create $argv
+        return
+    end
+    set -l root (git rev-parse --show-toplevel 2>/dev/null; or pwd)
+    zellij attach --create (basename $root)
+end
 
 function dir-sizes
     find . -maxdepth 1 -mindepth 1 -exec du -sh {} + 2>/dev/null | sort -h

@@ -1,0 +1,12 @@
+default_shell "fish"
+theme "dracula"
+default_layout "compact"
+show_startup_tips false
+show_release_notes false
+serialize_pane_viewport true
+
+ui {
+    pane_frames {
+        rounded_corners true
+    }
+}
