@@ -29,7 +29,7 @@ return {
 		-- "com.apple.Photos", -- Photos
 		"com.apple.podcasts", -- Podcasts
 		"com.apple.Preview", -- Preview
-		"com.apple.QuickTimePlayerX", -- QuickTime Player
+		-- "com.apple.QuickTimePlayerX", -- QuickTime Player
 		"com.apple.reminders", -- Reminders
 		-- "com.apple.Safari", -- Safari
 		"com.apple.shortcuts", -- Shortcuts
