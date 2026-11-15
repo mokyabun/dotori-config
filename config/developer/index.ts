@@ -3,7 +3,6 @@ import agent from './agent'
 import environment from './environment'
 import shell from './shell'
 import terminal from './terminal'
-import zed from './zed'
 
 export default (ctx: Context) => {
     // ctx.group('developer/agent', (g) => agent(g))
