@@ -43,21 +43,9 @@ local function notifyCaffeinate(mode)
 	end
 end
 
-local function restartLaunchAgent(label, name, icon, logName)
-	local output = hs.execute("/usr/bin/id -u") or ""
-	local uid = output:match("%d+")
-	if not uid then
-		notify.show({
-			icon = icon,
-			title = name .. " Reload Failed",
-			subtitle = "Could not resolve the user ID",
-			color = palette.red,
-		})
-		return
-	end
-
+local function restartService(bin, name, icon, logName)
 	local task
-	task = hs.task.new("/bin/launchctl", function(exitCode)
+	task = hs.task.new(bin, function(exitCode)
 		activeTasks[task] = nil
 		local succeeded = exitCode == 0
 		notify.show({
@@ -66,7 +54,7 @@ local function restartLaunchAgent(label, name, icon, logName)
 			subtitle = succeeded and "Config reloaded" or ("Check " .. logName),
 			color = succeeded and palette.purple or palette.red,
 		})
-	end, { "kickstart", "-k", "gui/" .. uid .. "/" .. label })
+	end, { "--restart-service" })
 	if task then
 		activeTasks[task] = true
 		task:start()
@@ -121,14 +109,14 @@ return {
 		text = "Reload yabai",
 		subText = "System",
 		fn = function()
-			restartLaunchAgent("yabai", "yabai", "YB", "yabai.err.log")
+			restartService("/opt/homebrew/bin/yabai", "yabai", "YB", "/tmp/yabai_" .. os.getenv("USER") .. ".err.log")
 		end,
 	},
 	{
 		text = "Reload skhd",
 		subText = "System",
 		fn = function()
-			restartLaunchAgent("skhd", "skhd", "SK", "skhd.err.log")
+			restartService("/opt/homebrew/bin/skhd", "skhd", "SK", "/tmp/skhd_" .. os.getenv("USER") .. ".err.log")
 		end,
 	},
 	{

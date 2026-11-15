@@ -11,6 +11,11 @@ fi
 "$YABAI_BIN" -m signal --add label=dotori-dock-restarted event=dock_did_restart \
   action="sudo -n $YABAI_BIN --load-sa && $YABAI_CONFIG_DIR/ensure-spaces.sh"
 
+# Displays that appear after startup (slow monitors at login, wake from sleep) get only one space.
+"$YABAI_BIN" -m signal --remove dotori-display-added 2>/dev/null || true
+"$YABAI_BIN" -m signal --add label=dotori-display-added event=display_added \
+  action="$YABAI_CONFIG_DIR/ensure-spaces.sh"
+
 # Tile windows by default. Individual windows can be toggled with hyper + m.
 "$YABAI_BIN" -m config layout bsp
 
